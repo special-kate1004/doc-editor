@@ -1,0 +1,36 @@
+{
+  "workspaces": [
+    {
+      "id": "workspace-1",
+      "name": "My Workspace",
+      "icon": "fas fa-folder",
+      "documents": [
+        {
+          "id": "doc-1",
+          "title": "Welcome Document",
+          "lastModified": 1635603431943
+        }
+      ]
+    }
+  ],
+  "documentContents": {
+    "doc-1": {
+      "time": 1635603431943,
+      "blocks": [
+        {
+          "type": "header",
+          "data": {
+            "text": "Welcome to the Document Editor",
+            "level": 1
+          }
+        },
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "This is a sample document. You can edit it or create new documents using the sidebar."
+          }
+        }
+      ]
+    }
+  }
+} 

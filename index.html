@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+  </head>
+  <body>
+    <div class="app-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h1>Document Editor</h1>
+        </div>
+        <div class="workspace-section">
+          <div class="workspace-header">
+            <span>Workspaces</span>
+            <button class="add-button" id="add-workspace">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <ul class="workspace-list" id="workspace-list">
+            <li class="workspace-item">
+              <span>My Workspace</span>
+              <button class="add-document-button">
+                <i class="fas fa-plus"></i>
+              </button>
+              <ul class="document-list">
+                <li class="document-item">
+                  <i class="far fa-file-alt"></i>
+                  <span>Document 1</span>
+                </li>
+                <li class="document-item">
+                  <i class="far fa-file-alt"></i>
+                  <span>Document 2</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <main class="main-content">
+        <div class="top-toolbar">
+          <div class="document-title">Untitled Document</div>
+          <div class="toolbar-actions">
+            <div class="status-indicator">
+              <i class="fas fa-check-circle"></i>
+              <span>All changes saved</span>
+            </div>
+            <button id="save">
+              <i class="fas fa-save"></i>
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="editor-container">
+            <div id="editorjs"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Workspace Modal -->
+    <div class="modal" id="workspace-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Create New Workspace</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="workspace-name">Workspace Name</label>
+            <input type="text" id="workspace-name" placeholder="Enter workspace name">
+          </div>
+          <div class="form-group">
+            <label>Select Icon</label>
+            <div class="icon-grid">
+              <button class="icon-option" data-icon="fas fa-folder"><i class="fas fa-folder"></i></button>
+              <button class="icon-option" data-icon="fas fa-briefcase"><i class="fas fa-briefcase"></i></button>
+              <button class="icon-option" data-icon="fas fa-project-diagram"><i class="fas fa-project-diagram"></i></button>
+              <button class="icon-option" data-icon="fas fa-tasks"><i class="fas fa-tasks"></i></button>
+              <button class="icon-option" data-icon="fas fa-cube"><i class="fas fa-cube"></i></button>
+              <button class="icon-option" data-icon="fas fa-boxes"><i class="fas fa-boxes"></i></button>
+              <button class="icon-option" data-icon="fas fa-layer-group"><i class="fas fa-layer-group"></i></button>
+              <button class="icon-option" data-icon="fas fa-sitemap"><i class="fas fa-sitemap"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel-modal">Cancel</button>
+          <button class="create-workspace">Create Workspace</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Modal -->
+    <div class="modal" id="document-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Create New Document</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="document-name">Document Name</label>
+            <input type="text" id="document-name" placeholder="Enter document name">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel-modal">Cancel</button>
+          <button class="create-document">Create Document</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
