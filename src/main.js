@@ -1,5 +1,17 @@
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
+import Table from '@editorjs/table';
+import RawTool from '@editorjs/raw';
+import Warning from '@editorjs/warning';
+import Attaches from '@editorjs/attaches';
+import Code from '@editorjs/code';
+import Marker from '@editorjs/marker';
+import InlineCode from '@editorjs/inline-code';
+import Underline from '@editorjs/underline';
+import Image from '@editorjs/image';
+import Quote from '@editorjs/quote';
+import Delimiter from '@editorjs/delimiter';
+import List from '@editorjs/list';
 import mockData from './data/documents.json';
 
 let selectedWorkspaceId = null;
@@ -56,17 +68,108 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+   class Paragraph {
+    static get toolbox() {
+      return {
+        title: 'Text',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>'
+      };
+    }
+
+    static get conversionConfig() {
+      return {
+        export: 'text',
+        import: 'text'
+      };
+    }
+
+    constructor({ data, config, api }) {
+      this.api = api;
+      this.data = {
+        text: data.text || ''
+      };
+      this.config = config || {};
+    }
+
+    render() {
+      const div = document.createElement('div');
+      div.classList.add('ce-paragraph', 'cdx-block');
+      div.contentEditable = true;
+      div.innerHTML = this.data.text;
+      
+      div.addEventListener('focus', () => {
+        if (!div.textContent.trim()) {
+          div.dataset.placeholder = 'Type something...';
+        }
+      });
+
+      div.addEventListener('blur', () => {
+        div.removeAttribute('data-placeholder');
+      });
+
+      div.addEventListener('input', () => {
+        if (div.textContent.trim()) {
+          div.removeAttribute('data-placeholder');
+        } else if (document.activeElement === div) {
+          div.dataset.placeholder = 'Type something...';
+        }
+      });
+
+      div.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+          this.api.blocks.insert();
+        }
+      });
+
+      return div;
+    }
+
+    save(blockContent) {
+      return {
+        text: blockContent.innerHTML || ''
+      };
+    }
+
+    static get sanitize() {
+      return {
+        text: {
+          br: true,
+          p: true,
+        }
+      };
+    }
+
+    static get isReadOnlySupported() {
+      return true;
+    }
+
+    onPaste(event) {
+      const data = {
+        text: event.detail.data.innerHTML || ''
+      };
+      
+      this.data = data;
+    }
+  }
+
   editor = new EditorJS({
-  holder: 'editorjs',
-  placeholder: 'Type something...',
+    holder: 'editorjs',
+    placeholder: 'Type something...',
     onChange: () => {
       if (currentDocument) {
         statusIndicator.setState('unsaved');
       }
-
       updateEditorHeight();
     },
+    preserveBlankBlocks: true,
+    defaultBlock: 'paragraph',
     tools: {
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true,
+      },
       header: {
         class: Header,
         inlineToolbar: true,
@@ -75,7 +178,146 @@ document.addEventListener('DOMContentLoaded', async () => {
           levels: [1, 2, 3, 4, 5, 6],
           defaultLevel: 3
         }
-      }
+      },
+      image: {
+        class: Image,
+        inlineToolbar: true,
+        config: {
+          uploader: {
+            uploadByFile(file) {
+              return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  resolve({
+                    success: 1,
+                    file: {
+                      url: e.target.result
+                    }
+                  });
+                };
+                reader.readAsDataURL(file);
+              });
+            },
+            uploadByUrl(url) {
+              return Promise.resolve({
+                success: 1,
+                file: {
+                  url: url
+                }
+              });
+            }
+          }
+        }
+      },
+      list: {
+        class: List,
+        inlineToolbar: true,
+        config: {
+          defaultStyle: 'unordered',
+          hideOrderedButton: true
+        }
+      },
+      code: {
+        class: Code,
+        inlineToolbar: true,
+        config: {
+          placeholder: 'Enter code here...'
+        }
+      },
+      quote: {
+        class: Quote,
+        inlineToolbar: true,
+        config: {
+          quotePlaceholder: 'Enter a quote',
+          captionPlaceholder: 'Quote\'s author'
+        }
+      },
+      delimiter: {
+        class: Delimiter
+      },
+      table: {
+        class: Table,
+        inlineToolbar: true,
+        config: {
+          rows: 2,
+          cols: 3,
+        },
+      },
+      raw: {
+        class: RawTool,
+        inlineToolbar: true,
+        config: {
+          placeholder: 'Enter HTML code here...'
+        }
+      },
+      warning: {
+        class: Warning,
+        inlineToolbar: true,
+        config: {
+          titlePlaceholder: 'Title',
+          messagePlaceholder: 'Message'
+        },
+      },
+      attaches: {
+        class: Attaches,
+        config: {
+          uploader: {
+            uploadByFile(file) {
+              return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  resolve({
+                    success: 1,
+                    file: {
+                      url: e.target.result,
+                      name: file.name,
+                      size: file.size,
+                      extension: file.name.split('.').pop(),
+                      title: file.name
+                    }
+                  });
+                };
+                reader.readAsDataURL(file);
+              });
+            },
+            uploadByUrl(url) {
+              return Promise.resolve({
+                success: 1,
+                file: {
+                  url: url,
+                  name: url.split('/').pop(),
+                  extension: url.split('.').pop(),
+                  size: 0
+                }
+              });
+            }
+          }
+        }
+      },
+
+      underline: {
+        class: Underline,
+        shortcut: 'CMD+U'
+      },
+      inlineCode: {
+        class: InlineCode,
+        shortcut: 'CMD+SHIFT+C'
+      },
+      marker: {
+        class: Marker,
+        shortcut: 'CMD+SHIFT+M'
+      },
+    },
+    data: {
+      blocks: []
+    },
+    onReady: () => {
+   editor.on('change', () => {
+        const blocks = editor.blocks.getBlocksCount();
+        if (blocks === 0) {
+          editor.blocks.insert('paragraph');
+        }
+      });
     }
   });
 
@@ -567,7 +809,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (content) {
       const contentHeight = content.scrollHeight;
-      const minHeight = 297 * 3.779528; // Convert 297mm to pixels (1mm = 3.779528px)
+      const minHeight = 297 * 3.779528; 
       editorElement.style.height = Math.max(contentHeight + 40, minHeight) + 'px';
     }
   }

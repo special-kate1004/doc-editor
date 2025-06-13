@@ -301,6 +301,10 @@ input:checked + .slider:before {
   height: auto !important;
 }
 
+.codex-editor__redactor path {
+  stroke: rgb(41 41 45) !important  ;
+}
+
 .ce-block__content {
   max-width: 100% !important;
   margin: 0 !important;
@@ -311,6 +315,19 @@ input:checked + .slider:before {
   max-width: 100% !important;
 }
 
+/* Make checklist check icon white */
+.cdx-checklist__item--checked .cdx-checklist__item-checkbox-check {
+  stroke: white !important;
+}
+
+.cdx-checklist__item--checked .cdx-checklist__item-checkbox {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+.cdx-list__checkbox--checked .cdx-list__checkbox-check svg path{
+  stroke: white !important;
+}
 
 .ce-paragraph {
   font-size: 11pt;
